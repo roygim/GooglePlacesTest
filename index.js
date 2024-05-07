@@ -5,7 +5,7 @@ const { config } = require("dotenv");
 config()
 
 const api_key = process.env.API_KEY
-const query = 'שטיפת רכב בחולוןכל החנויות בתל אביב, ישראל כולל אוכל'
+const query = 'חנות לחיות מחמד בחולון'
 
 const getPlaces = async (pageToken = null) => {
     try {
