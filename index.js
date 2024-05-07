@@ -1,35 +1,17 @@
 const axios = require("axios")
 const fs = require('fs')
+const { config } = require("dotenv");
 
-const getPlacesNew = async () => {
-    try {
-        const baseURL = 'https://places.googleapis.com/v1/places:searchText';
+config()
 
-        const response = await axios.post(baseURL,
-            {
-                textQuery: 'כל החנויות בתל אביב, ישראל כולל אוכל'
-            },
-            {
-                headers: {
-                    "Content-Type": "application/json",
-                    "X-Goog-Api-Key": "AIzaSyAxqcstSo-cQwGcpcUrZa0MxEZhmURJDFM",
-                    "X-Goog-FieldMask": "places.displayName,places.formattedAddress"
-                }
-            });
-
-        console.table(response.data.places)
-    } catch (err) {
-        console.log(err)
-    }
-}
-
-// getPlacesNew()
+const api_key = process.env.API_KEY
+const query = 'שטיפת רכב בחולוןכל החנויות בתל אביב, ישראל כולל אוכל'
 
 const getPlaces = async (pageToken = null) => {
     try {
         const params = {
-            query: 'כל החנויות בתל אביב, ישראל כולל אוכל',
-            key: "AIzaSyAxqcstSo-cQwGcpcUrZa0MxEZhmURJDFM",
+            query: query,
+            key: api_key,
         }
 
         if (pageToken) {
@@ -50,6 +32,8 @@ const getPlaces = async (pageToken = null) => {
 
 const getAllPlaces = async () => {
     try {
+        console.log('getAllPlaces start')
+
         let nextPageToken = null
         let allResults = []
         let pageNumber = 1
@@ -61,6 +45,8 @@ const getAllPlaces = async () => {
             allResults = allResults.concat(responseData.results)
             nextPageToken = responseData.next_page_token
             pageNumber++
+
+            // console.log('nextPageToken', nextPageToken)
             
             // Pause execution for a few seconds as per Google's guidelines
             await new Promise(resolve => setTimeout(resolve, 2000));
@@ -68,7 +54,9 @@ const getAllPlaces = async () => {
         } while (nextPageToken && pageNumber <= maxPageNumber)
 
         // console.log(allResults)
-        writeToFile(allResults, 'places.json')
+        await writeToFile(allResults, 'places.json')
+
+        console.log('getAllPlaces finish')
     } catch (error) {
         console.error('Error fetching places:', error);
         throw error;
@@ -84,3 +72,25 @@ async function writeToFile(data, fileName) {
 }
 
 getAllPlaces()
+
+// const getPlacesNew = async () => {
+//     try {
+//         const baseURL = 'https://places.googleapis.com/v1/places:searchText';
+
+//         const response = await axios.post(baseURL,
+//             {
+//                 textQuery: query
+//             },
+//             {
+//                 headers: {
+//                     "Content-Type": "application/json",
+//                     "X-Goog-Api-Key": api_key,
+//                     "X-Goog-FieldMask": "places.displayName,places.formattedAddress"
+//                 }
+//             });
+
+//         console.table(response.data.places)
+//     } catch (err) {
+//         console.log(err)
+//     }
+// }
