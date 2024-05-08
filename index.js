@@ -1,6 +1,7 @@
 const axios = require("axios")
 const fs = require('fs')
 const { config } = require("dotenv");
+const { writeToFile } = require("./utils");
 
 config()
 
@@ -17,7 +18,7 @@ const getPlaces = async (pageToken = null) => {
         let params = {}
 
         params.key = api_key
-        params.query = query7
+        params.query = query6
 
         if (pageToken) {
             params.pagetoken = pageToken;
@@ -65,14 +66,6 @@ const getAllPlaces = async () => {
     } catch (error) {
         console.error('Error fetching places:', error);
         throw error;
-    }
-}
-
-async function writeToFile(data, fileName) {
-    try {
-        await fs.promises.writeFile(fileName, JSON.stringify(data, null, 2));
-    } catch (err) {
-        console.error(err);
     }
 }
 
