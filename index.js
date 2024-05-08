@@ -1,5 +1,4 @@
 const axios = require("axios")
-const fs = require('fs')
 const { config } = require("dotenv");
 const { writeToFile } = require("./utils");
 
