@@ -5,17 +5,22 @@ const { config } = require("dotenv");
 config()
 
 const api_key = process.env.API_KEY
-const query = 'חנות לחיות מחמד בחולון'
+const query = 'Please return all pet shops in Holon, Israel. Distinct results only.'
+const query2 = 'Please return all pet shops in Holon, Israel.'
+const query3 = 'חנויות לחיות מחמד בחולון'
+const query4 = 'Pet shops in Holon'
+const query6 = 'מסעדות בתל אביב, ישראל'
+const query7 = 'restaurants in Tel Aviv'
 
 const getPlaces = async (pageToken = null) => {
     try {
-        const params = {
-            query: query,
-            key: api_key,
-        }
+        let params = {}
+
+        params.key = api_key
+        params.query = query7
 
         if (pageToken) {
-            params.pageToken = pageToken;
+            params.pagetoken = pageToken;
         }
 
         const response = await axios.get('https://maps.googleapis.com/maps/api/place/textsearch/json', {
@@ -23,7 +28,6 @@ const getPlaces = async (pageToken = null) => {
         });
 
         return response.data
-        // return response.data.next_page_token)
     } catch (error) {
         console.error('Error fetching places:', error);
         throw error;
@@ -37,7 +41,7 @@ const getAllPlaces = async () => {
         let nextPageToken = null
         let allResults = []
         let pageNumber = 1
-        let maxPageNumber = 3
+        let maxPageNumber = 10
 
         do {
             console.log(`page number: ${pageNumber}`);
@@ -47,7 +51,7 @@ const getAllPlaces = async () => {
             pageNumber++
 
             // console.log('nextPageToken', nextPageToken)
-            
+
             // Pause execution for a few seconds as per Google's guidelines
             await new Promise(resolve => setTimeout(resolve, 2000));
 
@@ -56,6 +60,7 @@ const getAllPlaces = async () => {
         // console.log(allResults)
         await writeToFile(allResults, 'places.json')
 
+        console.log(`allResults total: ${allResults.length}`)
         console.log('getAllPlaces finish')
     } catch (error) {
         console.error('Error fetching places:', error);
@@ -72,25 +77,3 @@ async function writeToFile(data, fileName) {
 }
 
 getAllPlaces()
-
-// const getPlacesNew = async () => {
-//     try {
-//         const baseURL = 'https://places.googleapis.com/v1/places:searchText';
-
-//         const response = await axios.post(baseURL,
-//             {
-//                 textQuery: query
-//             },
-//             {
-//                 headers: {
-//                     "Content-Type": "application/json",
-//                     "X-Goog-Api-Key": api_key,
-//                     "X-Goog-FieldMask": "places.displayName,places.formattedAddress"
-//                 }
-//             });
-
-//         console.table(response.data.places)
-//     } catch (err) {
-//         console.log(err)
-//     }
-// }
